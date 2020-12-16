@@ -34,18 +34,18 @@ jobs:
         shell: bash -l {0}
         run: |
           conda activate ismn
-          python setup.py install
+#         python setup.py install
       - name: Run setup.py test
         shell: bash -l {0}
         run: |
           conda activate ismn
           python setup.py test
-  #    - name: Send coverage report
-  #      if: ${{ success() }}
-  #      run: |
-  #        pip install coveralls
-  #        coveralls
-#      - name: Build and publish
+#     - name: Send coverage report
+#        if: ${{ success() }}
+#        run: |
+#          pip install coveralls
+#          coveralls
+#     - name: Build and publish
 #          env:
 #            TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
 #            TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
