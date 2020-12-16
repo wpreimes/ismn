@@ -24,30 +24,31 @@ jobs:
         $CONDA/bin/conda  config --set always_yes yes --set changeps1 no
         $CONDA/bin/conda update -q conda
         python -m pip install --upgrade pip
-    - name: Install dependencies
-      run: |
-        $CONDA/bin/conda install python=${{ matrix.python-version }}
-        # environment variables are not stored between steps -> use base env
-        $CONDA/bin/conda env update -f environment.yml -n base
-        python setup.py install
-    - name: Show environment infos
-      run: |
-        $CONDA/bin/conda info -a
-        $CONDA/bin/conda list
-        pip list
-        which pip
-        which python
-    - name: Lint with flake8
-      run: |
-        $CONDA/bin/conda install flake8
-        # stop the build if there are Python syntax errors or undefined names
-        $CONDA/bin/flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        $CONDA/bin/flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with setup.py
-      run: |
-        python setup.py test
-    - name: Send coverage report
-      if: ${{ success() }}
-        pip install coveralls
-        coveralls
+#    - name: Install dependencies
+#      run: |
+#        $CONDA/bin/conda install python=${{ matrix.python-version }}
+#        # environment variables are not stored between steps -> use base env
+#        $CONDA/bin/conda env update -f environment.yml -n base
+#        python setup.py install
+#    - name: Show environment infos
+#      run: |
+#        $CONDA/bin/conda info -a
+#        $CONDA/bin/conda list
+#        pip list
+#        which pip
+#        which python
+#    - name: Lint with flake8
+#      run: |
+#        $CONDA/bin/conda install flake8
+#        # stop the build if there are Python syntax errors or undefined names
+#        $CONDA/bin/flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+#        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+#        $CONDA/bin/flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+#    - name: Test with setup.py
+#      run: |
+#        python setup.py test
+#    - name: Send coverage report
+#      if: ${{ success() }}
+#      run: |
+#        pip install coveralls
+#        coveralls
