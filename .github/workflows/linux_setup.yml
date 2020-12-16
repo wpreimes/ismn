@@ -17,20 +17,26 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2
         with:
           miniconda-version: "latest"
-          activate-environment: ismn
           environment-file: environment.yml
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
-      - shell: bash -l {0}
+          activate-environment: ismn
+      - name: Environment infos
+        shell: bash -l {0}
         run: |
           conda activate ismn
-          python setup.py develop
           conda info -a
           conda list
           pip list
           which pip
           which python
-  #    - name: Lint with flake8
+      - name: Install package
+#        shell: bash -l {0}
+        run: |
+          conda activate ismn
+          python setup.py install
+
+      #    - name: Lint with flake8
   #      run: |
   #        $CONDA/bin/conda install flake8
   #        # stop the build if there are Python syntax errors or undefined names
@@ -38,6 +44,7 @@ jobs:
   #        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
   #        $CONDA/bin/flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: setup.py test
+        shell: bash -l {0}
         run: |
           conda activate ismn
           python setup.py test
