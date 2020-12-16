@@ -6,7 +6,7 @@ name: Linux Installation and Testing
 on: [push, pull_request]
 
 jobs:
-  build-linux:
+  ismn-linux-python:
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
