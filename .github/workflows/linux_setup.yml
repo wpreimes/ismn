@@ -24,12 +24,12 @@ jobs:
         $CONDA/bin/conda  config --set always_yes yes --set changeps1 no
         $CONDA/bin/conda update -q conda
         python -m pip install --upgrade pip
-#    - name: Install dependencies
-#      run: |
-#        $CONDA/bin/conda install python=${{ matrix.python-version }}
-#        # environment variables are not stored between steps -> use base env
-#        $CONDA/bin/conda env update -f environment.yml -n base
-#        python setup.py install
+    - name: Install dependencies
+      run: |
+        $CONDA/bin/conda install python=${{ matrix.python-version }}
+        # environment variables are not stored between steps -> use base env
+        $CONDA/bin/conda env update -f environment.yml -n base
+        python setup.py install
 #    - name: Show environment infos
 #      run: |
 #        $CONDA/bin/conda info -a
