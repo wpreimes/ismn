@@ -10,21 +10,21 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
-        python-version: ['3.6', '3.7', '3.8']
+        python-version: ['3.6']
 
     steps:
       - uses: actions/checkout@v2
       - uses: conda-incubator/setup-miniconda@v2
         with:
           miniconda-version: "latest"
-          environment-file: environment.yml
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
+          environment-file: environment.yml
           activate-environment: ismn
+          auto-activate-base: false
       - name: Print environment infos
         shell: bash -l {0}
         run: |
-          conda activate ismn
           conda info -a
           conda list
           pip list
@@ -33,12 +33,10 @@ jobs:
       - name: Install package
         shell: bash -l {0}
         run: |
-          conda activate ismn
-#         python setup.py install
+          python setup.py install
       - name: Run setup.py test
         shell: bash -l {0}
         run: |
-          conda activate ismn
           python setup.py test
 #     - name: Send coverage report
 #        if: ${{ success() }}
