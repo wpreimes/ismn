@@ -1,14 +1,12 @@
-# This workflow will install Python dependencies and run tests on
-# windows and linux systems with a variety of Python versions
+name: build
+
+# This workflow installs the package and all dependencies from the
+# ./environment.yml file on ubuntu and windows OS, calls 'setup.py test'
+# and submits the resulting coverage report to coveralls.
+# Runs on daily, on push and pull requests.
 
 # For more information see:
 # https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
-name: build
-
-env:
-  # RELEASE_USER: Only tagged commits in repo under this account are published
-  RELEASE_ACCOUNT: 'wpreimes'
 
 on:
   push:
@@ -35,7 +33,7 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
           environment-file: ./environment.yml
-          activate-environment: ismn # must match with name in yml (if there is one)
+          activate-environment: ismn # must match with name: in yml (if name is set)
           auto-activate-base: false
       - name: Print environment infos
         shell: bash -l {0}
@@ -69,51 +67,3 @@ jobs:
           pip3 install --upgrade coveralls && coveralls --finish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  release:
-    name: Create Package Release 📦
-    # needs original repo (TUW-GEO) and tagged commit (v*)
-    if: startsWith(github.ref, 'refs/tags/v') && startsWith(github.repository, '$RELEASE_ACCOUNT/')
-    needs: coveralls
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${GITHUB_REF#refs/tags/}
-          release_name: ${GITHUB_REF#refs/tags/}
-          body_path: ./CHANGELOG.rst
-          draft: false
-          prerelease: false
-  publish:
-    name: Upload to Pypi 🚀
-    # needs original repo (TUW-GEO) and tagged commit (v*)
-    if: startsWith(github.ref, 'refs/tags/v') && startsWith(github.repository, '$RELEASE_ACCOUNT/')
-    needs: release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref }}
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-      - name: Build
-        shell: bash -l {0}
-        run: |
-          python setup.py --version
-          python setup.py sdist
-          pip install wheel && python setup.py bdist_wheel
-      - name: Publish distribution to Test PyPI
-        uses: pypa/gh-action-pypi-publish@v1.4.1
-        with:
-          skip_existing: true
-          verbose: true
-          verify_metadata: true
-          packages_dir: dist/
-          user: __token__
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }} # todo: change token for real pypi in github actions secrets of the repo
-          repository_url: https://test.pypi.org/legacy/ # todo: delete for real pypi
