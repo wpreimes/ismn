@@ -6,6 +6,10 @@
 
 name: build
 
+env:
+  # RELEASE_USER: Only tagged commits in repo under this account are published
+  RELEASE_ACCOUNT: 'wpreimes'
+
 on:
   push:
   pull_request:
@@ -30,8 +34,8 @@ jobs:
           miniconda-version: "latest"
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
-          environment-file: environment.yml
-          # activate-environment: ismn
+          environment-file: ./environment.yml
+          activate-environment: ismn # must match with name in yml (if there is one)
           auto-activate-base: false
       - name: Print environment infos
         shell: bash -l {0}
@@ -67,8 +71,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   release:
     name: Create Package Release 📦
-    # needs original repo (TUW-GEO) and tag (v*)
-    if: startsWith(github.ref, 'refs/tags/v') && startsWith(github.repository, 'wpreimes/') # todo change
+    # needs original repo (TUW-GEO) and tagged commit (v*)
+    if: startsWith(github.ref, 'refs/tags/v') && startsWith(github.repository, '$RELEASE_ACCOUNT/')
     needs: coveralls
     runs-on: ubuntu-latest
     steps:
@@ -84,8 +88,8 @@ jobs:
           prerelease: false
   publish:
     name: Upload to Pypi 🚀
-    # needs original repo (TUW-GEO) and tag (v*)
-    if: startsWith(github.ref, 'refs/tags/v') && startsWith(github.repository, 'wpreimes/') # todo change
+    # needs original repo (TUW-GEO) and tagged commit (v*)
+    if: startsWith(github.ref, 'refs/tags/v') && startsWith(github.repository, '$RELEASE_ACCOUNT/')
     needs: release
     runs-on: ubuntu-latest
     steps:
